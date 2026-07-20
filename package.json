@@ -1,0 +1,23 @@
+{
+  "name": "crypto-lab-isogeny-atlas",
+  "version": "1.0.0",
+  "description": "Browser demo of the supersingular isogeny graph over GF(431^2) — a real, live-computed atlas of the curves, the paths, and the seven foremost open problems of isogeny-based cryptography.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:a11y": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.9"
+  }
+}
