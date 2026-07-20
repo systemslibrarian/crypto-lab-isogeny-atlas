@@ -74,6 +74,29 @@ describe('walks on the atlas', () => {
     expect(messageBits('A').join('')).toBe('01000001');
   });
 
+  // ---- teaching-model semantics, pinned (see the in-page model notes) ----
+  // j = 1728 has adj2 = { self-loop ×1, j=19 ×2 } (proved in modpoly.test.ts).
+  // The walk model collapses the multiplicity-2 edge into one choice and skips
+  // the self-loop, so the first step from 1728 is forced to 19.
+
+  it('pinned: cglWalk skips self-loops and collapses parallel edges (forced first step at j=1728)', () => {
+    const loops = atlas.adj2[start].filter((e) => e.to === start);
+    const mult2 = atlas.adj2[start].filter((e) => e.to !== start && e.mult === 2);
+    expect(loops.length).toBe(1); // the structure this test depends on
+    expect(mult2.length).toBe(1);
+    const forced = mult2[0].to;
+    // both bit values take the same first step — the collapse, made visible
+    expect(cglWalk(atlas.adj2, start, [0]).path[1]).toBe(forced);
+    expect(cglWalk(atlas.adj2, start, [1]).path[1]).toBe(forced);
+  });
+
+  it('pinned: exactLengthEndpoints counts the self-loop as a length-1 walk at j=1728', () => {
+    const s1 = exactLengthEndpoints(atlas.adj2, start, 1);
+    expect(s1.has(start)).toBe(true); // via the self-loop
+    const neighbors = new Set(atlas.adj2[start].map((e) => e.to));
+    for (const v of s1) expect(neighbors.has(v)).toBe(true);
+  });
+
   it('the CGL walk is deterministic and every hop is a real edge', () => {
     const bits = messageBits('isogeny');
     const w1 = cglWalk(atlas.adj2, start, bits);

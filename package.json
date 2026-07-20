@@ -2,6 +2,7 @@
   "name": "crypto-lab-isogeny-atlas",
   "version": "1.0.0",
   "description": "Browser demo of the supersingular isogeny graph over GF(431^2) — a real, live-computed atlas of the curves, the paths, and the seven foremost open problems of isogeny-based cryptography.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",

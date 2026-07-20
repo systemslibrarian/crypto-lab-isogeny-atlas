@@ -61,8 +61,10 @@ async function driveDemos(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
-async function scan(page: Page): Promise<void> {
+async function scan(page: Page, label: string): Promise<void> {
+  const t0 = Date.now();
   const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+  console.log(`axe scan (${label}): ${((Date.now() - t0) / 1000).toFixed(1)}s`);
   expect(
     violations.map((v) => ({
       id: v.id,
@@ -76,7 +78,7 @@ async function scan(page: Page): Promise<void> {
 test('no WCAG A/AA violations — dark theme', async ({ page }) => {
   await page.goto('.');
   await driveDemos(page);
-  await scan(page);
+  await scan(page, 'dark');
 });
 
 test('no WCAG A/AA violations — light theme', async ({ page }) => {
@@ -84,5 +86,5 @@ test('no WCAG A/AA violations — light theme', async ({ page }) => {
   await page.locator('#cl-theme-toggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await driveDemos(page);
-  await scan(page);
+  await scan(page, 'light');
 });

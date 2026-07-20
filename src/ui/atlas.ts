@@ -130,9 +130,18 @@ export class AtlasView {
           class: 'node-shape',
         });
       }
+      // Transparent hit region: with the SVG's 640px minimum rendered width
+      // (scale ≥ 0.89), r = 14 gives a ≥ 24 CSS px touch target (WCAG 2.2 AA
+      // target size) without visually enlarging the vertex.
+      const hit = el('circle', {
+        cx: `${x}`,
+        cy: `${y}`,
+        r: '14',
+        class: 'node-hit',
+      });
       const t = el('title');
       t.textContent = `j = ${show(j)}`;
-      g.append(shape, t);
+      g.append(hit, shape, t);
       if (special) {
         const label = el('text', {
           x: `${x}`,

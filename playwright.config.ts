@@ -8,10 +8,31 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',
+  // The a11y suite deliberately drives every exhibit into its post-interaction
+  // state before scanning, and a full light-theme scan has been measured near
+  // 60 s; Playwright's 30 s default made the gate flaky. 120 s is headroom,
+  // not laziness.
+  timeout: 120_000,
   use: {
     baseURL: 'http://localhost:4329/crypto-lab-isogeny-atlas/',
     colorScheme: 'dark',
+    trace: 'retain-on-failure',
   },
+  projects: [
+    {
+      name: 'desktop-chromium',
+      testIgnore: /mobile\.spec\.ts/,
+    },
+    {
+      name: 'mobile-chromium',
+      testMatch: /mobile\.spec\.ts/,
+      use: {
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+  ],
   webServer: {
     command: 'npm run preview -- --port 4329 --strictPort',
     url: 'http://localhost:4329/crypto-lab-isogeny-atlas/',

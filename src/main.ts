@@ -55,8 +55,9 @@ const nodeName = (v: number): string =>
 const statusEl = $('#atlas-status');
 statusEl.textContent =
   `Computed live in ${atlas.buildMs.toFixed(0)} ms: ${atlas.nodes.length} supersingular curves, ` +
-  `${edgeCount(atlas.adj2)} two-isogeny edges, ${edgeCount(atlas.adj3)} three-isogeny edges. ` +
-  `Nothing on this page is hard-coded.`;
+  `${edgeCount(atlas.adj2)} distinct 2-isogeny connections and ${edgeCount(atlas.adj3)} distinct ` +
+  `3-isogeny connections (loops and multiplicities drawn once, as thicker strokes). ` +
+  `No vertex or adjacency list is hard-coded — both edge sets were computed from Φ₂ and Φ₃ at load.`;
 
 /* live self-checks shown in the Exhibit 1 details */
 const checks: Array<[string, boolean]> = [
@@ -97,6 +98,7 @@ dump.textContent = atlas.nodes
 /* ---------------- vertex inspector ---------------- */
 
 const nodeInfo = $('#node-info');
+const selInspect = $('#sel-inspect') as unknown as HTMLSelectElement;
 
 const describeNode = (v: number): void => {
   const j = atlas.nodes[v];
@@ -130,9 +132,17 @@ const describeNode = (v: number): void => {
 
 /* ---------------- edge-set toggle ---------------- */
 
+/** Single source of truth for the displayed edge set: view + radio together. */
+const setEll = (ell: 2 | 3): void => {
+  view.setEll(ell);
+  for (const radio of document.querySelectorAll<HTMLInputElement>('input[name="ell"]')) {
+    radio.checked = Number(radio.value) === ell;
+  }
+};
+
 for (const radio of document.querySelectorAll<HTMLInputElement>('input[name="ell"]')) {
   radio.addEventListener('change', () => {
-    view.setEll(Number(radio.value) as 2 | 3);
+    setEll(Number(radio.value) as 2 | 3);
     resetSearch(`Edge set switched to ${radio.value}-isogenies.`);
   });
 }
@@ -328,7 +338,7 @@ $('#btn-shuffle').addEventListener('click', () => {
   let next = (current + 7) % n;
   if (next === Number(selStart.value)) next = (next + 1) % n;
   selTarget.value = String(next);
-  resetSearch(`Target shuffled to ${nodeName(next)}.`);
+  resetSearch(`Target advanced to ${nodeName(next)}.`);
 });
 
 $('#btn-clear').addEventListener('click', () => resetSearch());
@@ -338,8 +348,20 @@ for (const sel of [selStart, selTarget]) {
 }
 
 view.onActivate = (v) => {
+  selInspect.value = String(v);
   describeNode(v);
 };
+
+/* inspect select: an equivalent, touch-compliant way to reach every vertex */
+atlas.nodes.forEach((_, v) => {
+  const opt = document.createElement('option');
+  opt.value = String(v);
+  opt.textContent = nodeName(v);
+  selInspect.append(opt);
+});
+selInspect.addEventListener('change', () => {
+  if (selInspect.value !== '') describeNode(Number(selInspect.value));
+});
 
 /* ---------------- exhibit 3: the seven problems ---------------- */
 
@@ -368,7 +390,7 @@ const problemStatus = (): HTMLElement => $('#problem-status');
 function renderProblem(i: number): void {
   const p = PROBLEMS[i];
   panel.innerHTML = `
-    <span class="problem-tagline">On the graph: ${p.tagline}</span>
+    <span class="problem-tagline">On the graph: ${p.tagline} · shown on the 2-isogeny graph</span>
     <h3>Problem ${p.n} — ${p.title}</h3>
     <p>${p.plain}</p>
     <div class="controls-row" id="problem-widget"></div>
@@ -376,6 +398,7 @@ function renderProblem(i: number): void {
     <details>
       <summary>The precise problem &amp; its stakes</summary>
       ${p.precise}
+      ${p.boundary ? `<p class="model-note">${p.boundary}</p>` : ''}
       <p class="problem-refs">
         Read more: ${p.refs
           .map((r) => `<a href="${r.url}">${r.label}</a>`)
@@ -391,6 +414,9 @@ function showProblem(i: number): void {
     if (k === i) b.setAttribute('aria-current', 'true');
     else b.removeAttribute('aria-current');
   });
+  // The tour's structures are all computed in the 2-isogeny graph; keep the
+  // displayed edge set (and its radio) in sync so every highlighted edge exists.
+  setEll(2);
   view.clearHighlights();
   renderProblem(i);
 }
@@ -411,6 +437,11 @@ const farFrom = (v: number): number => {
 
 function wireWidget(n: number): void {
   const wrap = $('#problem-widget');
+  // If the user flips to 3-isogenies mid-tour, any widget interaction first
+  // restores the 2-isogeny view the tour computes in (capture phase runs
+  // before the widget handlers highlight anything).
+  wrap.addEventListener('click', () => setEll(2), true);
+  wrap.addEventListener('input', () => setEll(2), true);
   const p = PROBLEMS[n - 1];
   const btn = document.createElement('button');
   btn.type = 'button';
@@ -494,7 +525,7 @@ function wireWidget(n: number): void {
         const ends = exactLengthEndpoints(atlas.adj2, start, k);
         view.highlightNodes(ends, 'hl-set');
         say(
-          `${ends.size} of 37 curves are endpoints of a cyclic degree-2^${k} = ${2 ** k} isogeny from j = 1728. ` +
+          `${ends.size} of 37 curves are endpoints of length-${k} walks from j = 1728 — the graph shadow of cyclic degree-2^${k} = ${2 ** k} isogenies (model note in the expert layer). ` +
             `"Reach this exact curve with this exact degree" is a different — and differently hard — question than "reach it at all".`,
         );
       };

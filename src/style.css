@@ -320,17 +320,32 @@ body {
 }
 @media (max-width: 900px) {
   .atlas-grid {
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr), not 1fr: a bare 1fr track has an auto minimum, which
+       would let the 640px pan surface force page-level horizontal overflow */
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Deliberate pan surface: the graph never shrinks below a usable scale;
+   on narrow screens the panel scrolls horizontally instead. */
+.atlas-scroll {
+  overflow-x: auto;
+  border-radius: 12px;
 }
 
 .atlas-svg {
   width: 100%;
+  min-width: 640px;
   height: auto;
   background: var(--c-bg);
   border: 1px solid var(--c-border);
   border-radius: 12px;
   display: block;
+}
+
+.atlas-svg .node-hit {
+  fill: transparent;
+  stroke: none;
 }
 
 .atlas-svg .edge {
@@ -511,6 +526,14 @@ body {
   color: var(--c-muted);
 }
 
+.model-note {
+  border-left: 3px solid var(--c-warn);
+  padding: 0.4rem 0.8rem;
+  background: var(--c-surface);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.88rem;
+}
+
 .src-note {
   font-size: 0.85rem;
   color: var(--c-muted);
@@ -552,7 +575,7 @@ body {
     align-items: stretch;
   }
   .atlas-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

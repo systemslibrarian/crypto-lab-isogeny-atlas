@@ -29,7 +29,7 @@ crypto.**
 | Supersingularity verification (`curve.ts`, tests) | **Real** independent check via Weierstrass point arithmetic and Frobenius-trace group orders |
 | Self-checks shown in-page | **Real**: vertex count ⌊p/12⌋+2, Eichler mass formula, (ℓ+1)-regularity, all recomputed live |
 | Path search, cycles, exact-length walks (`walk.ts`) | **Real** graph algorithms on the computed graph |
-| "Hash" walk (Problem 5) | **Real** CGL-style walk driven by actual message bits, with a simplified edge-ordering convention (labelled in-page) |
+| "Hash" walk (Problem 5) | **Real** deterministic bit walk on the computed graph, CGL-inspired; the kernel-level simplifications are stated in the in-page "Model note" |
 | Collision finder (Problem 7) | **Real** brute-force enumeration — feasible only because p is tiny, which is the lesson |
 | The seven problem statements | Teaching **paraphrases** of the literature; the page links the paper for the experts' precise write-ups |
 
@@ -72,6 +72,31 @@ Toggle edge sets, inspect all 37 curves, race breadth-first search by hand,
 step through the seven problems, hash a message into the graph, and brute-force
 a real hash collision — everything computed in your browser.
 
+## Provenance of the Seven Problems
+
+The framing follows ePrint 2026/1431 ("The Isogeny Problems", Castryck, De Feo,
+Galbraith, Kutas, Reijnders, Wesolowski). Paper metadata (title, authors,
+abstract's "seven foremost unsolved problems" framing) was verified against
+eprint.iacr.org on 2026-07-19/20; the PDF itself is behind the publisher's bot
+challenge and has **not** been machine-verified line-by-line against this demo.
+The titles below are therefore **this demo's labels** for seven problem areas
+long studied in the open literature — each grounded in the primary sources
+linked in-page — and the one-to-one mapping to the paper's own section headings
+is pending verification against the paper text:
+
+| Displayed problem | Grounding in the literature |
+|---|---|
+| 1. Path-Finding | Charles–Goren–Lauter 2006; De Feo, arXiv:1711.04062 |
+| 2. Endomorphism Ring | Kohel 1996; EHLMP 2018; Wesolowski FOCS 2021 |
+| 3. One Endomorphism | Page–Wesolowski, Eurocrypt 2024 (ePrint 2023/1448) |
+| 4. Fixed-Degree Isogeny | Castryck–Decru 2022; Robert 2022 (context) |
+| 5. Hashing Into the Graph | Booher et al., ePrint 2022/518 |
+| 6. Group Action / Vectorization | Couveignes; CSIDH (ePrint 2018/383); Kuperberg |
+| 7. Collisions / Cycles | Petit–Lauter, ePrint 2017/962; Eisenträger et al., arXiv:1804.04063 |
+
+All in-page problem text is paraphrase, never quotation, and is labelled as
+such on the page.
+
 ## What Can Go Wrong
 
 - **Reading toy sizes as security estimates.** Every count on the page (37
@@ -80,7 +105,9 @@ a real hash collision — everything computed in your browser.
 - **"Non-backtracking" subtleties.** At the two extra-automorphism vertices
   (j = 0, j ≡ 1728) and at multi-edges, the standard walk conventions are
   subtler than a toy can show; the page uses the usual teaching simplification
-  (no immediate returns) and says so.
+  (previous-vertex non-backtracking, parallel edges collapsed, self-loops
+  skipped in walks) and renders a "Model note" beside Problems 4, 5, and 7
+  saying exactly that. The corresponding semantics are pinned by unit tests.
 - **Paraphrase drift.** The seven problem statements are paraphrases; the
   authoritative statements are the experts' write-ups in ePrint 2026/1431,
   linked in-page.
@@ -97,9 +124,9 @@ a real hash collision — everything computed in your browser.
 ```bash
 npm install
 npm run dev        # Vite dev server
-npm test           # Vitest — 54 unit tests incl. the spec KATs
+npm test           # Vitest — 56 unit tests incl. the spec KATs
 npm run build      # typecheck + production build
-npm run test:a11y  # axe-core WCAG 2.1 AA gate, both themes (port 4329)
+npm run test:a11y  # Playwright: axe WCAG gate (both themes) + behavior + mobile suites (port 4329)
 ```
 
 ## Related Demos
@@ -110,18 +137,28 @@ npm run test:a11y  # axe-core WCAG 2.1 AA gate, both themes (port 4329)
 
 ## Build & Verify
 
-- **54 Vitest unit tests**, colocated in `src/`, including **17 numbered spec
+- **56 Vitest unit tests**, colocated in `src/`, including **17 numbered spec
   KATs**: classical CM identities for Φ₂/Φ₃ in exact integers
   (e.g. `Φ₂(1728, 66³) = 0`, `Φ₂(8000, 8000) = 0`, `Φ₃(0, −12288000) = 0`),
   the 37-vertex count, the Eichler mass formula `Σ 1/|Aut| = (p−1)/24`,
-  (ℓ+1)-regularity, connectivity, Galois stability, and an independent
+  (ℓ+1)-regularity, connectivity, Galois stability, an independent
   supersingularity verification of all 37 curves by Frobenius-trace point
-  arithmetic — plus a control test proving ordinary curves *fail* it.
+  arithmetic — plus a control test proving ordinary curves *fail* it — and
+  pinned walk-model semantics (self-loop and parallel-edge behavior).
 - **Accessibility gate:** `@axe-core/playwright` scans the production build in
-  **both themes** after driving every exhibit into its post-interaction state;
-  zero WCAG 2.1 A/AA violations, enforced in CI before deploy.
+  **both themes** after driving every exhibit into its post-interaction state
+  (test timeout 120 s — a full light-theme scan measures ~60 s); zero WCAG 2.1
+  A/AA violations, enforced in CI before deploy.
+- **Behavior suite** (separate from axe): graph-mode coherence between the
+  displayed edge set and the tour (including the from-3-isogeny regression),
+  exact path-edge highlight counts, all seven widgets, keyboard operation, and
+  reduced-motion behavior.
+- **Mobile suite** (390 × 844, touch): ≥ 24 px vertex hit targets, in-panel
+  panning with no page-level horizontal overflow, and the Inspect-curve menu
+  as a touch-compliant equivalent control.
 - **Deploy:** GitHub Actions → Pages; unit tests, typecheck, build, and the
-  a11y gate all block the deploy.
+  full Playwright gate all block the deploy.
+- **License:** MIT (see `LICENSE`).
 
 ## Performance
 

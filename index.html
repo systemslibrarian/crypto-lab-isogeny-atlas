@@ -178,41 +178,19 @@
         </aside>
       </header>
 
-      <section class="card" aria-labelledby="intro-h">
-        <h2 id="intro-h">What is this?</h2>
-        <p>
-          An elliptic curve can be boiled down to a single number, its
-          <em>j-invariant</em>. An <em>isogeny</em> is a structure-preserving map between
-          two curves. Put a dot for every special ("supersingular") curve and a line for
-          every small isogeny between them, and you get the graph below — a tangled maze
-          with no discernible pattern. The central hard problem of isogeny-based
-          cryptography is embarrassingly simple to state: <strong>given two dots, find a
-          path between them.</strong> At real-world sizes the maze has about 2^250 rooms
-          and nobody knows how to navigate it — and the field's frontier is a short list
-          of precisely-stated open questions about this maze, which this page walks
-          through one by one.
-        </p>
-        <p class="not-note">
-          <strong>What this isn't:</strong> not a key-exchange demo, not an attack lab,
-          and not cryptographic-size — this is a real graph over the small prime p = 431,
-          honestly labelled. For the SIDH key exchange, its 2022 collapse, and a working
-          toy CSIDH, see
-          <a href="https://systemslibrarian.github.io/crypto-lab-isogeny-gate/"
-            >crypto-lab-isogeny-gate</a
-          >. Not production crypto — a teaching demo.
-        </p>
-      </section>
-
       <section class="card" id="exhibit-1" aria-labelledby="ex1-h">
         <span class="kicker">Exhibit 1</span>
         <h2 id="ex1-h">The atlas, computed — not drawn</h2>
         <p class="lede">
-          Every dot and line below was computed just now, in your browser: starting from
-          the one curve everyone knows is supersingular (j = 1728), the neighbors of each
-          vertex are found by genuinely factoring the modular polynomial Φ_ℓ(j, Y) over
-          GF(431²). Click or focus a vertex to inspect it. Squares are curves whose
-          j-invariant lives in the base field GF(431) — the "spine" where problem six
-          happens.
+          Each dot is a supersingular elliptic curve, each line an isogeny between two of
+          them — all computed just now, in your browser, by factoring the modular
+          polynomial Φ_ℓ(j, Y) over GF(431²). Tap, click, or focus a vertex — or use the
+          Inspect menu — to see its curve. Squares are the GF(431) "spine" (problem six).
+        </p>
+        <p class="not-note">
+          <strong>Real math, toy size:</strong> p = 431, so the whole graph fits on
+          screen; at cryptographic sizes (p ≈ 2²⁵⁶) it would have ~2²⁵² vertices. Not
+          production crypto — a teaching demo.
         </p>
         <div class="controls-row">
           <fieldset>
@@ -228,13 +206,20 @@
         </div>
         <div class="atlas-grid">
           <div>
-            <svg
-              id="atlas-svg"
-              class="atlas-svg"
-              viewBox="0 0 720 560"
-              role="group"
-              aria-label="Supersingular isogeny graph over GF(431 squared): 37 vertices, one per supersingular j-invariant. Each vertex is focusable; details appear in the vertex inspector."
-            ></svg>
+            <div
+              class="atlas-scroll"
+              tabindex="0"
+              role="region"
+              aria-label="Isogeny graph panel — scrolls horizontally on narrow screens"
+            >
+              <svg
+                id="atlas-svg"
+                class="atlas-svg"
+                viewBox="0 0 720 560"
+                role="group"
+                aria-label="Supersingular isogeny graph over GF(431 squared): 37 vertices, one per supersingular j-invariant. Each vertex is focusable; the Inspect curve menu is an equivalent control."
+              ></svg>
+            </div>
             <ul class="legend" aria-label="Legend">
               <li><span class="swatch" aria-hidden="true"></span> curve (j ∈ GF(431²))</li>
               <li><span class="swatch sq" aria-hidden="true"></span> spine curve (j ∈ GF(431))</li>
@@ -243,8 +228,14 @@
             </ul>
           </div>
           <div>
+            <div class="controls-row">
+              <label for="sel-inspect">Inspect curve</label>
+              <select id="sel-inspect">
+                <option value="">choose a j-invariant…</option>
+              </select>
+            </div>
             <div class="node-info" id="node-info" role="status" aria-live="polite">
-              <p>Select a vertex to inspect its curve.</p>
+              <p>Select a vertex (tap, click, or use the menu) to inspect its curve.</p>
             </div>
             <p id="atlas-status" class="status" role="status" aria-live="polite"></p>
           </div>
@@ -275,6 +266,31 @@
         </details>
       </section>
 
+      <section class="card" aria-labelledby="intro-h">
+        <h2 id="intro-h">What is this?</h2>
+        <p>
+          An elliptic curve can be boiled down to a single number, its
+          <em>j-invariant</em>. An <em>isogeny</em> is a structure-preserving map between
+          two curves. Put a dot for every special ("supersingular") curve and a line for
+          every small isogeny between them, and you get the graph above — a tangled maze
+          with no discernible pattern. The central hard problem of isogeny-based
+          cryptography is embarrassingly simple to state: <strong>given two dots, find a
+          path between them.</strong> At real-world sizes the maze has about 2²⁵² rooms
+          (the vertex count is ≈ p/12, with p ≈ 2²⁵⁶) and nobody knows how to navigate it
+          — and the field's frontier is a short list of precisely-stated open questions
+          about this maze, which this page walks through one by one.
+        </p>
+        <p class="not-note">
+          <strong>What this isn't:</strong> not a key-exchange demo, not an attack lab,
+          and not cryptographic-size — this is a real graph over the small prime p = 431,
+          honestly labelled. For the SIDH key exchange, its 2022 collapse, and a working
+          toy CSIDH, see
+          <a href="https://systemslibrarian.github.io/crypto-lab-isogeny-gate/"
+            >crypto-lab-isogeny-gate</a
+          >. Not production crypto — a teaching demo.
+        </p>
+      </section>
+
       <section class="card" id="exhibit-2" aria-labelledby="ex2-h">
         <span class="kicker">Exhibit 2</span>
         <h2 id="ex2-h">Find the path — feel the hard problem</h2>
@@ -290,7 +306,7 @@
           <select id="sel-start"></select>
           <label for="sel-target">Target</label>
           <select id="sel-target"></select>
-          <button id="btn-shuffle" type="button">Shuffle target</button>
+          <button id="btn-shuffle" type="button">Next target</button>
         </div>
         <div class="controls-row">
           <button id="btn-walk-self" type="button" class="primary">
