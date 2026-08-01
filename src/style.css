@@ -117,7 +117,6 @@ body {
   padding: 0.08em 0.35em;
 }
 
-/* BEGIN cl-hero standard — managed, keep in sync across fleet */
 .cl-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:clamp(1rem,4vw,3rem);flex-wrap:wrap;margin:clamp(1rem,3vw,2rem) 0 1.5rem;}
 .cl-hero-main{flex:1 1 22rem;min-width:min(100%,20rem);}
 .cl-hero-title{margin:0;font-size:clamp(1.6rem,3.8vw,2.7rem);font-weight:700;line-height:1.1;letter-spacing:.01em;}
@@ -126,8 +125,7 @@ body {
 .cl-hero-why{flex:0 1 min(40%,26rem);min-width:min(100%,15rem);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.05rem;background:color-mix(in oklab,var(--accent) 6%,transparent);}
 .cl-hero-why-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.14em;}
 .cl-hero-why-text{margin:.35rem 0 0;font-size:.95rem;line-height:1.5;}
-@media (max-width:640px){.cl-hero{flex-direction:column;}.cl-hero-why{flex-basis:auto;width:100%;}}
-/* END cl-hero standard */
+@media (max-width:640px){.cl-hero{flex-direction:column;}.cl-hero-why{flex-basis:auto;width:100%;}.cl-hero-main{flex-basis:auto;min-width:0;}}
 
 /* map the hero's generic vars onto this demo's theme */
 .cl-hero {
@@ -182,6 +180,9 @@ body {
   background: var(--c-surface-2);
   color: var(--c-text);
   padding: 0.45rem 0.9rem;
+  /* WCAG 2.5.8 target size */
+  min-height: 44px;
+  min-width: 44px;
   cursor: pointer;
 }
 #app button:hover {
@@ -216,6 +217,8 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.6rem center;
+  min-height: 44px;
+  max-width: 100%;
 }
 
 #app input[type='text'] {
@@ -232,6 +235,21 @@ body {
 #app input[type='range'] {
   accent-color: var(--c-accent);
   max-width: 14rem;
+  min-height: 44px;
+}
+
+/* Radio/checkbox rows: give the label a 44px hit row and the control a
+   touch-sized box (WCAG 2.5.8). */
+#app :is(input[type='radio'], input[type='checkbox']) {
+  inline-size: 20px;
+  block-size: 20px;
+  accent-color: var(--c-accent);
+}
+#app fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
 }
 
 #app :is(button, select, input, summary, a, [tabindex='0']):focus-visible {
@@ -278,6 +296,8 @@ body {
   cursor: pointer;
   font-weight: 700;
   font-size: 0.92rem;
+  min-height: 44px;
+  padding: 0.55rem 0;
 }
 #app details[open] summary {
   margin-bottom: 0.4rem;
@@ -482,10 +502,17 @@ body {
   margin: 0.5rem 0;
 }
 
+/* The 4-column scale table must scroll inside its own box rather than widen
+   the page on a 360px viewport. */
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
 .scale-table {
   border-collapse: collapse;
   font-size: 0.88rem;
   width: 100%;
+  min-width: 30rem;
 }
 .scale-table th,
 .scale-table td {

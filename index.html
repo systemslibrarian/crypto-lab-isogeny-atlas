@@ -38,11 +38,6 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-<!-- BEGIN crypto-lab shared header — managed; edit shared-header.html + re-run reapply-header.py
-     Identical on every lab. Self-contained styles. Accents use each demo's own
-     --accent CSS variable (teal #35d6bb fallback). The ONLY per-repo value is the
-     repo name (crypto-lab-isogeny-atlas) in the GitHub link.
-     Source of truth: github.com/systemslibrarian/crypto-lab/shared-header.html -->
 <style>
   .cl-topbar{
     /* The bar is always dark (#0b1512) regardless of page theme, so header
@@ -154,7 +149,6 @@
     else dedupeBanner();
   })();
 </script>
-<!-- END crypto-lab shared header -->
     <main id="app">
       <header class="cl-hero">
         <div class="cl-hero-main">
@@ -336,7 +330,7 @@
             cost about √p; quantum algorithms improve on that somewhat, but no known
             attack is efficient:
           </p>
-          <table class="scale-table">
+          <div class="table-scroll"><table class="scale-table">
             <caption class="visually-hidden">
               How the graph and attack costs scale with the prime
             </caption>
@@ -368,7 +362,7 @@
                 <td>beyond any conceivable computer</td>
               </tr>
             </tbody>
-          </table>
+          </table></div>
           <p class="problem-refs">
             Costs are the standard generic estimates; scheme-specific security also
             depends on the problems in Exhibit 3.
