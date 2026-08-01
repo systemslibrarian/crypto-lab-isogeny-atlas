@@ -550,8 +550,19 @@ function wireWidget(n: number): void {
         view.addNodeClass(J1728, 'hl-start');
         view.highlightPath(w.path, 'hl-path');
         view.addNodeClass(w.end, 'hl-target');
+        // Report consumption and branching as measured. A bit that met only one
+        // available neighbor did not choose anything, and a walk that ran out of
+        // moves did not hash the whole message — say both rather than print a
+        // bit count that implies otherwise.
+        const dropped = bits.length - w.bitsUsed;
         say(
-          `Hashed ${w.bitsUsed} bits into a ${w.path.length - 1}-step walk from j = 1728, landing on ${nodeName(w.end)}. ` +
+          `Hashed ${w.bitsUsed} of your message's ${bits.length} bits into a ${w.path.length - 1}-step walk from j = 1728, landing on ${nodeName(w.end)}. ` +
+            (dropped > 0
+              ? `The walk ran out of legal moves after ${w.bitsUsed} bits, so ${dropped} were not hashed — an artifact of a 37-vertex graph, not of CGL. `
+              : '') +
+            (w.forcedSteps > 0
+              ? `${w.forcedSteps} of those steps had only one neighbor available, so that bit did not branch — the toy is small. `
+              : '') +
             `Note what just happened: to produce this "random" curve, you walked there — so you know a path to it, and with it (in principle) its endomorphism ring. ` +
             `Producing a supersingular curve NOBODY knows a path to, without trusted setup, is the open problem.`,
           'good',

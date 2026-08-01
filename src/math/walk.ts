@@ -156,13 +156,45 @@ export const messageBits = (msg: string): number[] => {
 export interface CglResult {
   readonly path: readonly number[];
   readonly end: number;
+  /** Bits consumed. Equals bits.length unless the walk ran out of moves. */
   readonly bitsUsed: number;
+  /**
+   * Steps where only one neighbor was available, so the bit did not actually
+   * choose anything. The toy graph is small enough for this to happen; the page
+   * reports it rather than presenting every bit as if it had branched.
+   */
+  readonly forcedSteps: number;
 }
 
 /**
+ * The neighbors a hash step may move to, having arrived at `cur` from `prev`.
+ *
+ * Self-loops are skipped and parallel isogenies to the same neighbor collapse to
+ * one vertex-level choice — the stated teaching model. Immediate return to
+ * `prev` is forbidden, EXCEPT across an edge of multiplicity ≥ 2: several
+ * distinct isogenies join that pair, only one of them is the dual of the step
+ * just taken, so going back along a different one is a genuine non-backtracking
+ * move. (This is the vertex-level model's closest approximation to CGL's
+ * dual-isogeny rule.)
+ *
+ * That exception is load-bearing, not a nicety. Without it the walk dead-ends:
+ * over GF(431²), j = 0 has adj₂ = {j = 125 ×3} and j ≡ 1728 has
+ * {self ×1, j = 19 ×2}, so a walk arriving at either from its only neighbor had
+ * no legal move at all and simply stopped — silently discarding the rest of the
+ * message (72 of the 120 bits of the exhibit's own default message; 327 of 344
+ * for a pangram) and stranding the "hash" on one of two sink vertices.
+ */
+const hashOptions = (
+  edges: readonly Edge[],
+  cur: number,
+  prev: number,
+): number[] =>
+  edges.filter((e) => e.to !== cur && (e.to !== prev || e.mult >= 2)).map((e) => e.to);
+
+/**
  * Toy CGL-style hash walk on the 2-isogeny graph: start at a fixed vertex,
- * and at each step let the next message bit choose between the (usually two)
- * neighbors other than the vertex we just left, in canonical index order.
+ * and at each step let the next message bit choose among the neighbors reachable
+ * under {@link hashOptions}, in canonical index order.
  * This is a genuine deterministic walk in the genuine graph — the same idea
  * as the Charles–Goren–Lauter hash, with a simplified edge-ordering
  * convention (the real construction fixes conventions via the kernel
@@ -177,18 +209,20 @@ export const cglWalk = (
   let cur = start;
   let prev = -1;
   let used = 0;
+  let forcedSteps = 0;
   for (const bit of bits) {
-    const options = adj[cur]
-      .filter((e) => e.to !== prev && e.to !== cur)
-      .map((e) => e.to);
-    if (options.length === 0) break; // cannot happen in a connected 3-regular graph
+    const options = hashOptions(adj[cur], cur, prev);
+    // No legal move: the walk stops and the caller is told how many bits it
+    // actually consumed, so a truncated hash can never be reported as a whole one.
+    if (options.length === 0) break;
+    if (options.length === 1) forcedSteps++;
     const choice = options[bit % options.length];
     prev = cur;
     cur = choice;
     path.push(cur);
     used++;
   }
-  return { path, end: cur, bitsUsed: used };
+  return { path, end: cur, bitsUsed: used, forcedSteps };
 };
 
 export interface Collision {

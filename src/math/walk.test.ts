@@ -108,6 +108,49 @@ describe('walks on the atlas', () => {
     }
   });
 
+  it('the walk consumes the whole message — the sink vertices no longer dead-end it', () => {
+    // Regression pin. Non-backtracking used to be enforced purely by previous
+    // VERTEX, which strands the walk: over GF(431²), j = 0 has only {125 ×3} and
+    // j ≡ 1728 has {self ×1, 19 ×2}, so a walk arriving at either from its one
+    // neighbour had no legal move and stopped — silently hashing a prefix of the
+    // message while reporting the endpoint as if it were the whole digest.
+    //
+    // The fix allows return across an edge of multiplicity >= 2, where several
+    // distinct isogenies join the pair and only one is the dual of the step just
+    // taken.
+    //
+    // Measured under the old rule, so this test is known to bite rather than
+    // merely pass: 'alice@example' hashed 17 of 104 bits and the pangram 17 of
+    // 344. 'isogeny' (56 bits) survived the old rule intact and is kept only as
+    // a control — on its own it would have been a vacuous regression test.
+    for (const msg of ['isogeny', 'alice@example', 'The quick brown fox jumps over the lazy dog']) {
+      const bits = messageBits(msg);
+      const w = cglWalk(atlas.adj2, start, bits);
+      expect(w.bitsUsed).toBe(bits.length);
+      expect(w.path.length).toBe(bits.length + 1);
+    }
+  });
+
+  it('forcedSteps counts exactly the steps that had a single option', () => {
+    // The status line tells the learner how many bits did not actually branch,
+    // so the count has to be the measured one. Recompute it independently by
+    // replaying the path and asking how many options each step really had.
+    const bits = messageBits('endomorphism');
+    const w = cglWalk(atlas.adj2, start, bits);
+
+    let expectedForced = 0;
+    let prev = -1;
+    for (let i = 0; i + 1 < w.path.length; i++) {
+      const cur = w.path[i];
+      const options = atlas.adj2[cur].filter((e) => e.to !== cur && (e.to !== prev || e.mult >= 2));
+      if (options.length === 1) expectedForced++;
+      prev = cur;
+    }
+    expect(w.forcedSteps).toBe(expectedForced);
+    // And it can never exceed the number of steps actually taken.
+    expect(w.forcedSteps).toBeLessThanOrEqual(w.bitsUsed);
+  });
+
   it('different messages usually walk to different places (sanity, not a theorem)', () => {
     const a = cglWalk(atlas.adj2, start, messageBits('alice@example'));
     const b = cglWalk(atlas.adj2, start, messageBits('bob-fake-cert'));
