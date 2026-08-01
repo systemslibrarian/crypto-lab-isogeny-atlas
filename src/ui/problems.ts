@@ -76,7 +76,7 @@ export const PROBLEMS: readonly Problem[] = [
     refs: [
       {
         label: 'Page–Wesolowski 2024 — one endomorphism suffices',
-        url: 'https://eprint.iacr.org/2023/1448',
+        url: 'https://eprint.iacr.org/2023/1399',
       },
     ],
     action: 'Show one cycle',

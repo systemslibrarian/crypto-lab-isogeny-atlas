@@ -88,7 +88,7 @@ is pending verification against the paper text:
 |---|---|
 | 1. Path-Finding | Charles–Goren–Lauter 2006; De Feo, arXiv:1711.04062 |
 | 2. Endomorphism Ring | Kohel 1996; EHLMP 2018; Wesolowski FOCS 2021 |
-| 3. One Endomorphism | Page–Wesolowski, Eurocrypt 2024 (ePrint 2023/1448) |
+| 3. One Endomorphism | Page–Wesolowski, Eurocrypt 2024 (ePrint 2023/1399) |
 | 4. Fixed-Degree Isogeny | Castryck–Decru 2022; Robert 2022 (context) |
 | 5. Hashing Into the Graph | Booher et al., ePrint 2022/518 |
 | 6. Group Action / Vectorization | Couveignes; CSIDH (ePrint 2018/383); Kuperberg |
