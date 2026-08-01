@@ -150,14 +150,14 @@ export const PROBLEMS: readonly Problem[] = [
     boundary:
       '<strong>Model note.</strong> The collision finder enumerates the same simplified bit walk as Problem 5 (parallel edges collapsed, self-loops skipped, previous-vertex non-backtracking, canonical neighbor order). The collision it exhibits is real — two genuinely different walks in the genuine graph with the same endpoint — but the walk model is the teaching simplification, not a kernel-labelled CGL transition system.',
     precise:
-      '<p><strong>Problem.</strong> Given a starting supersingular curve E₀ with unknown endomorphism ring, find two distinct non-backtracking walks from E₀ with the same endpoint (a collision of the CGL hash), or equivalently a non-trivial cycle — an endomorphism — reachable from E₀.</p><p><strong>What is known.</strong> From a curve with <em>known</em> endomorphism ring, collisions can be manufactured (Petit–Lauter; Eisenträger et al. study the cycle structure) — which is why Problem 5’s trusted setup matters: CGL hashing is only collision-resistant from a base curve of unknown ring. A collision yields an endomorphism, connecting this problem back to Problems 2–3; the exact quantitative relationship between collision-finding and the endomorphism problems at concrete sizes is still being mapped.</p><p><strong>Stakes.</strong> Hash functions from expander walks were the field’s first application; whether they can ever be instantiated without trusted setup rests here and on Problem 5.</p>',
+      '<p><strong>Problem.</strong> Given a starting supersingular curve E₀ with unknown endomorphism ring, find two distinct non-backtracking walks from E₀ with the same endpoint (a collision of the CGL hash), or equivalently a non-trivial cycle — an endomorphism — reachable from E₀.</p><p><strong>What is known.</strong> From a curve with <em>known</em> endomorphism ring, collisions can be manufactured (Petit–Lauter; Bank et al. study the cycle structure) — which is why Problem 5’s trusted setup matters: CGL hashing is only collision-resistant from a base curve of unknown ring. A collision yields an endomorphism, connecting this problem back to Problems 2–3; the exact quantitative relationship between collision-finding and the endomorphism problems at concrete sizes is still being mapped.</p><p><strong>Stakes.</strong> Hash functions from expander walks were the field’s first application; whether they can ever be instantiated without trusted setup rests here and on Problem 5.</p>',
     refs: [
       {
         label: 'Petit–Lauter 2017 — hard and easy problems for these graphs',
         url: 'https://eprint.iacr.org/2017/962',
       },
       {
-        label: 'Eisenträger et al. — cycles in the ℓ-isogeny graph',
+        label: 'Bank et al. — cycles in the ℓ-isogeny graph',
         url: 'https://arxiv.org/abs/1804.04063',
       },
     ],

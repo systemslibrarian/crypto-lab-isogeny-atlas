@@ -92,7 +92,7 @@ is pending verification against the paper text:
 | 4. Fixed-Degree Isogeny | Castryck–Decru 2022; Robert 2022 (context) |
 | 5. Hashing Into the Graph | Booher et al., ePrint 2022/518 |
 | 6. Group Action / Vectorization | Couveignes; CSIDH (ePrint 2018/383); Kuperberg |
-| 7. Collisions / Cycles | Petit–Lauter, ePrint 2017/962; Eisenträger et al., arXiv:1804.04063 |
+| 7. Collisions / Cycles | Petit–Lauter, ePrint 2017/962; Bank et al., arXiv:1804.04063 |
 
 All in-page problem text is paraphrase, never quotation, and is labelled as
 such on the page.
