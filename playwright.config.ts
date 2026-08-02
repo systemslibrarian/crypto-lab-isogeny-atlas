@@ -34,7 +34,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run preview -- --port 4329 --strictPort',
+    // Build before serving. `preview` only serves whatever is already in
+    // dist/; without the build in front, a failing build leaves the previous
+    // good bundle on disk and the suite passes green against code that no
+    // longer compiles — silently invalidating mutation checks.
+    command: 'npm run build && npm run preview -- --port 4329 --strictPort',
     url: 'http://localhost:4329/crypto-lab-isogeny-atlas/',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
