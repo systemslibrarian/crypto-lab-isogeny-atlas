@@ -1,90 +1,37 @@
+import { test } from '@playwright/test';
+import { boot, driveAllStates, NARROW, reportCollected } from './gate';
+
 /**
- * WCAG 2.1 A/AA regression gate (axe-core), both themes, against the
- * production build. driveDemos() walks EVERY interactive surface into its
- * post-interaction state before scanning — an unscanned state is an ungated
- * state, and dynamic result regions are where violations hide.
+ * WCAG A/AA regression gate.
+ *
+ * Every state the lab can render is driven the way a visitor reaches it: a
+ * vertex inspected from the graph and again from the equivalent menu, both
+ * edge sets, the manual walk, the step-by-step flood layer by layer, the whole
+ * flood, both resets, all seven problems with their widgets fired, the
+ * fixed-degree slider at both ends and the CGL hash over a second message, the
+ * tour's wrap-around, and finally every expert `<details>` opened by clicking
+ * its summary. Every one of those is scanned, in both themes, at desktop and
+ * phone width.
+ *
+ * See `gate.ts` for why nothing is injected into the page, why no `<details>`
+ * is ever force-opened, why each scan asserts its content first, and why
+ * `violations` is not the whole oracle. WCAG 1.4.11 lives in
+ * `border-contrast.spec.ts`.
  */
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
 
-const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
-
-async function driveDemos(page: Page): Promise<void> {
-  await page.addStyleTag({
-    content: `*,*::before,*::after{animation:none!important;transition:none!important}`,
+for (const theme of ['dark', 'light'] as const) {
+  test(`no WCAG A/AA violations in ${theme} theme`, async ({ page }) => {
+    test.setTimeout(900_000);
+    await boot(page, theme);
+    await driveAllStates(page, theme);
+    reportCollected();
   });
-  // The graph is computed live at load; wait for the status line to prove it.
-  await expect(page.locator('#atlas-status')).toContainText('37 supersingular curves');
 
-  // Exhibit 1 — inspect a vertex (fills the node inspector), both edge sets.
-  await page.locator('#atlas-svg .node').first().click();
-  await expect(page.locator('#node-info')).toContainText('Model');
-  await page.getByLabel('3-isogenies (4-regular)').check();
-  await page.getByLabel('2-isogenies (3-regular)').check();
-
-  // Exhibit 2 — manual walk (renders neighbor buttons), one hop, then BFS.
-  await page.locator('#btn-walk-self').click();
-  await expect(page.locator('#walk-buttons button').first()).toBeVisible();
-  await page.locator('#walk-buttons button').first().click();
-  await page.locator('#btn-bfs-step').click(); // arm
-  await page.locator('#btn-bfs-step').click(); // layer 0
-  await page.locator('#btn-bfs-run').click();
-  await expect(page.locator('#path-status')).toContainText('path', { timeout: 20_000 });
-  await page.locator('#btn-shuffle').click();
-  await page.locator('#btn-clear').click();
-
-  // Exhibit 3 — visit all seven problems and fire each widget.
-  for (let i = 0; i < 7; i++) {
-    await page.locator('.tour-nav .num').nth(i).click();
-    const widgetButton = page.locator('#problem-widget button').first();
-    await widgetButton.click();
-    await expect(page.locator('#problem-status')).not.toHaveText('', {
-      timeout: 15_000,
-    });
-    if (i === 3) {
-      // fixed-degree slider
-      await page.locator('#deg-slider').fill('7');
-    }
-    if (i === 4) {
-      // hash a fresh message and re-walk
-      await page.locator('#hash-msg').fill('a11y drive');
-      await widgetButton.click();
-    }
-  }
-
-  // Open every <details> so the expert layer is scanned too.
-  await page.evaluate(() => {
-    document.querySelectorAll('details').forEach((d) => {
-      d.open = true;
-    });
+  test(`no WCAG A/AA violations in ${theme} theme at 380px`, async ({ page }) => {
+    test.setTimeout(900_000);
+    await page.setViewportSize(NARROW);
+    await boot(page, theme);
+    await driveAllStates(page, `${theme} @380px`);
+    reportCollected();
   });
-  await page.waitForTimeout(300);
 }
-
-async function scan(page: Page, label: string): Promise<void> {
-  const t0 = Date.now();
-  const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
-  console.log(`axe scan (${label}): ${((Date.now() - t0) / 1000).toFixed(1)}s`);
-  expect(
-    violations.map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      help: v.help,
-      nodes: v.nodes.map((n) => n.target.join(' ')).slice(0, 5),
-    })),
-  ).toEqual([]);
-}
-
-test('no WCAG A/AA violations — dark theme', async ({ page }) => {
-  await page.goto('.');
-  await driveDemos(page);
-  await scan(page, 'dark');
-});
-
-test('no WCAG A/AA violations — light theme', async ({ page }) => {
-  await page.goto('.');
-  await page.locator('#cl-theme-toggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await driveDemos(page);
-  await scan(page, 'light');
-});

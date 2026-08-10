@@ -11,6 +11,14 @@
   --c-text: #f1eaff;
   --c-muted: #b9aad8;
   --c-border: #3d2a63;
+  /* Control boundaries and graph strokes only (WCAG 2.1 SC 1.4.11), never
+     decorative card edges — those stay --c-border. This token existed from the
+     start but reached only `#app select` and `#app input[type=text]`: two rules,
+     against eleven for --c-border. `#app button` — every button in all three
+     exhibits — drew its edge in --c-border and measured 1.46:1 against the card
+     over a fill that is 1.09:1, so a plain button had no visible boundary at
+     all. The repo's own 1.4.11 test queried `#sel-inspect`, which is one of the
+     two rules that already used this token. */
   --c-control-border: #8066a8;
   --c-link: #d79aff;
   --c-accent: #c65cff;
@@ -19,8 +27,12 @@
   --c-warn: #ffd24a;
   --c-bad: #ff6d8a;
 
-  --g-edge: #4b3775;
-  --g-edge-dim: #32234f;
+  /* The edges are the exhibit — a supersingular isogeny graph with its edges
+     removed is 37 unrelated dots — so they are graphical objects required to
+     understand the content and owe 3:1 against the panel they are drawn on
+     (WCAG 2.1 SC 1.4.11). #4b3775 measured 1.93:1 on --c-bg; #7a5eb5 is the
+     same violet carried far enough to reach 3.76:1. */
+  --g-edge: #7a5eb5;
   --g-node: #8f76c2;
   --g-node-ink: #f1eaff;
   --g-start: #43e59b;
@@ -41,6 +53,7 @@
   --c-text: #241536;
   --c-muted: #5a4878;
   --c-border: #d5c3ef;
+  /* See :root. 4.55:1 on --c-surface, 4.09:1 on --c-surface-2. */
   --c-control-border: #7c6799;
   --c-link: #7d1fd3;
   --c-accent: #7d1fd3;
@@ -49,8 +62,8 @@
   --c-warn: #8a6400;
   --c-bad: #c11c48;
 
-  --g-edge: #b7a3d8;
-  --g-edge-dim: #d9cdec;
+  /* See :root. #b7a3d8 measured 2.27:1 on white; #8a6fb8 reaches 4.16:1. */
+  --g-edge: #8a6fb8;
   --g-node: #6a4d9e;
   --g-node-ink: #ffffff;
   --g-start: #0c7a4b;
@@ -178,7 +191,10 @@ body {
   font-size: 0.9rem;
   font-weight: 600;
   border-radius: 9px;
-  border: 1px solid var(--c-border);
+  /* Load-bearing control boundary (WCAG 2.1 SC 1.4.11), same token as the
+     select and the text input. The fill is --c-surface-2 on a --c-surface card,
+     1.09:1, so this border is the only thing that says a button is there. */
+  border: 1px solid var(--c-control-border);
   background: var(--c-surface-2);
   color: var(--c-text);
   padding: 0.45rem 0.9rem;
@@ -373,9 +389,6 @@ body {
 .atlas-svg .edge {
   stroke: var(--g-edge);
   fill: none;
-}
-.atlas-svg .edge.dim {
-  stroke: var(--g-edge-dim);
 }
 .atlas-svg .edge.hl-path {
   stroke: var(--g-path);

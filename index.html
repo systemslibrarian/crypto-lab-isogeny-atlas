@@ -65,7 +65,18 @@
   .cl-btn{
     display:inline-flex;align-items:center;gap:.4rem;
     padding:.5rem .85rem;border-radius:10px;
-    border:1px solid color-mix(in srgb, var(--accent, #35d6bb) 38%, transparent);
+    /* Mix --cl-ink, NOT --accent. These three controls have a transparent fill,
+       so this border is the only thing delineating them from the bar, and 1.4.11
+       wants 3:1 against it. Mixing the raw accent toward transparent cannot get
+       there for a lab whose accent is dark: this lab's is #c65cff, which at 38%
+       composited to 1.77:1 on the bar's #0b1512, and in the light theme
+       (--accent: #7d1fd3) to 1.28:1 — even at 100% that accent is only ~2.2:1,
+       so no percentage of it would have worked. --cl-ink is the accent already
+       carried toward #eafff8 for exactly this reason (it is what keeps the bar's
+       TEXT readable), and 70% of it clears 3:1 for every accent in the fleet:
+       6.58:1 for the #35d6bb default, 4.87:1 here in dark, 3.42:1 here in light,
+       3.81:1 for a #1a56db lab. */
+    border:1px solid color-mix(in srgb, var(--cl-ink) 70%, transparent);
     background:transparent;color:var(--cl-ink);cursor:pointer;
     font:inherit;font-size:.78rem;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;text-decoration:none;transition:background .15s,border-color .15s,color .15s;
@@ -348,7 +359,18 @@
             cost about √p; quantum algorithms improve on that somewhat, but no known
             attack is efficient:
           </p>
-          <div class="table-scroll"><table class="scale-table">
+          <!-- tabindex + role + label, like the graph pan surface and the
+               adjacency dump above. At 380px this table is 480px wide inside a
+               290px box, so it is a scrolling region, and a scrolling region
+               with no focusable content needs a focus stop of its own or the
+               keyboard cannot reach the columns it hides (WCAG 2.1.1). Two of
+               the lab's three scrollers already had this; this one did not. -->
+          <div
+            class="table-scroll"
+            tabindex="0"
+            role="region"
+            aria-label="Scale table — how the graph and the best known attacks grow with the prime"
+          ><table class="scale-table">
             <caption class="visually-hidden">
               How the graph and attack costs scale with the prime
             </caption>
