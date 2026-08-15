@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { boot, driveAllStates, NARROW, reportCollected } from './gate';
+import { boot, driveAllStates, expectBaselineNotStale, NARROW, reportCollected } from './gate';
 
 /**
  * WCAG A/AA regression gate.
@@ -25,6 +25,23 @@ for (const theme of ['dark', 'light'] as const) {
     await boot(page, theme);
     await driveAllStates(page, theme);
     reportCollected();
+
+    // The third ratchet rule — a baselined finding that no longer appears must
+    // be deleted, so the list can only shrink toward empty.
+    // `expectBaselineNotStale` was exported from `gate.ts` and imported by
+    // nothing, so it had never run.
+    //
+    // `nontext-baseline.ts` is currently empty, which is the goal state, so
+    // today this asserts nothing. It is wired anyway, and deliberately: an
+    // empty baseline is the one that most easily stops being empty. The moment
+    // an entry is added — and the header comment promises the file can only
+    // shrink back toward empty — the rule that forces its deletion has to
+    // already be running, or the entry becomes permanent the day it lands.
+    //
+    // After `reportCollected()`, deliberately: in an `A11Y_COLLECT` run that
+    // call throws to stop a collecting pass being read as green, and it should
+    // keep doing so before this hard assertion fires.
+    expectBaselineNotStale();
   });
 
   test(`no WCAG A/AA violations in ${theme} theme at 380px`, async ({ page }) => {
@@ -33,5 +50,6 @@ for (const theme of ['dark', 'light'] as const) {
     await boot(page, theme);
     await driveAllStates(page, `${theme} @380px`);
     reportCollected();
+    expectBaselineNotStale();
   });
 }
