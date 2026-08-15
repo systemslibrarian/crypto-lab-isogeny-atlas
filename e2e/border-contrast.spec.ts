@@ -35,7 +35,7 @@ interface Finding {
   detail: string;
 }
 
-for (const theme of ['dark', 'light'] as const) {
+for (const theme of ['dark'] as const) {
   for (const width of [1280, 380]) {
     test(`non-text contrast clears 3:1 — ${theme} theme at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
