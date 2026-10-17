@@ -185,12 +185,23 @@
           <span class="cl-hero-why-label">WHY IT MATTERS</span>
           <p class="cl-hero-why-text">
             Isogeny-based schemes like SQIsign are candidates to survive quantum
-            computers, and their entire security rests on how hard it is to navigate this
-            one kind of graph. Whoever settles these seven questions decides whether that
-            trust is justified.
+            computers. Their underlying mathematical security assumptions involve hard
+            isogeny problems, illustrated by this graph. Secure implementations must also
+            protect secret computations against leakage.
           </p>
         </aside>
       </header>
+
+      <section class="card" aria-labelledby="sqisign-update-heading">
+        <h2 id="sqisign-update-heading">Mathematical hardness and implementation security</h2>
+        <p><strong>SQIsign research update — 17 October 2026.</strong>
+          In <a href="https://eprint.iacr.org/2026/2508">Power Analysis on SQIsign via Ideal Reconstruction from Quaternion Leakages</a>
+          (received 16 October; published 17 October 2026), the authors report key recovery from
+          leaked intermediate values in Round-3 SQIsign signing, including partial leakage.
+          This preprint is conditional on implementation leakage; it does not establish a
+          public-key-only mathematical break of SQIsign or a break of CSIDH.
+          This lab does not implement SQIsign or reproduce the reported power analysis.</p>
+      </section>
 
       <section class="card" id="exhibit-1" aria-labelledby="ex1-h">
         <span class="kicker">Exhibit 1</span>

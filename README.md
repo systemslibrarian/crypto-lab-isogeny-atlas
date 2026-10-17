@@ -58,8 +58,8 @@ crypto.**
   security lives on, complementing lattice- and hash-based demos.
 - **Reading the isogeny literature** — the seven problems give a map: when a
   paper says "endomorphism ring computation", you have seen it as cycles.
-- **Understanding why SQIsign's security is graph navigation**, not equation
-  solving.
+- **Exploring SQIsign's underlying isogeny problems**, while distinguishing
+  mathematical assumptions from implementation security.
 - **Do NOT use it** to generate keys, hash data, or estimate concrete security:
   it is a demo app over a 9-bit prime and does not provide hardened
   operational controls.
@@ -99,6 +99,7 @@ such on the page.
 
 ## What Can Go Wrong
 
+- **Mathematical hardness does not prevent implementation leakage.** [Kim et al., *Power Analysis on SQIsign via Ideal Reconstruction from Quaternion Leakages* (ePrint 2026/2508)](https://eprint.iacr.org/2026/2508), received 16 October and published 17 October 2026, is a **preprint** reporting key recovery from leaked intermediate values in Round-3 SQIsign signing, including partial leakage. The result is **attack-model-conditional**: it does not establish a public-key-only mathematical break of SQIsign or a break of CSIDH. This lab does not implement SQIsign or reproduce the reported power analysis.
 - **Reading toy sizes as security estimates.** Every count on the page (37
   vertices, 33-curve floods, instant collisions) is honest for p = 431 and
   meaningless at p ≈ 2²⁵⁶ except through the stated scaling laws.
@@ -115,7 +116,8 @@ such on the page.
 ## Real-World Usage
 
 - **SQIsign** (NIST post-quantum signature on-ramp) — secret keys are
-  endomorphism rings; security is Problems 1–4.
+  endomorphism rings; Problems 1–4 inform its mathematical assumptions, not
+  an assurance of implementation security.
 - **CSIDH and group-action protocols** — Problem 6, on the spine.
 - **CGL-style expander hashes and VDF proposals** — Problems 5 and 7.
 
