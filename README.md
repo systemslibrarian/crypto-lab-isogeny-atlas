@@ -1,5 +1,11 @@
 # crypto-lab-isogeny-atlas
 
+## Isogeny research update — 31 October 2026
+
+The 30 October 2026 revision of Maher Mamah’s preprint (ePrint 2026/1821) revises concrete cost estimates for the newer isogeny-path algorithm. In the practical memory ranges studied, its expected advantage is concentrated at NIST Level I; substantial parallelization can change that comparison. These are heuristic estimates conditional on memory and parallelization assumptions, not demonstrated production SQIsign key recovery. The small graph experiments here do not measure those attack costs.
+
+Source: [Maher Mamah, *Complexity Analysis and Security Implications of the New Isogeny-Path Algorithm*](https://eprint.iacr.org/2026/1821), revised 30 October 2026. Preprint, not a standard or a demonstrated break of SQIsign.
+
 ## What It Is
 
 A browser atlas of the **supersingular isogeny graph** — the mathematical object
