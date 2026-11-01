@@ -17,5 +17,11 @@ test('both path-related lessons expose the revised concrete-cost limits and sour
     await expect(note).toContainText('parallelization');
     await expect(note).toContainText('not demonstrated production SQIsign key recovery');
     await expect(note.locator('a')).toHaveAttribute('href', 'https://eprint.iacr.org/2026/1821');
+    const theory = page.locator('#problem-panel .isogeny-theory-update');
+    await expect(theory).toBeVisible();
+    for (const text of ['31 October 2026', 'preprint', 'endomorphism-ring', 'not demonstrated production SQIsign key recovery', 'separate memory, overhead and parallelization assumptions', 'toy graph search']) {
+      await expect(theory).toContainText(text);
+    }
+    await expect(theory.locator('a')).toHaveAttribute('href', 'https://eprint.iacr.org/2026/2677');
   }
 });

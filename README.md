@@ -1,6 +1,12 @@
 # crypto-lab-isogeny-atlas
 
-## Isogeny research update — 31 October 2026
+## Isogeny research update — 1 November 2026
+
+Ouyang, Wei and Xu report smoothness bounds that remove the heuristic from Wesolowski’s asymptotic p^(1/3+o(1)) endomorphism-ring algorithm. This is a theoretical result in a preprint, not demonstrated production SQIsign key recovery. It does not remove the separate memory, overhead and parallelization assumptions in concrete cost estimates, or make this toy graph search a measurement of those costs.
+
+Source: [Ouyang, Wei and Xu, *Smoothness of Shortest Isogenies to Frobenius Conjugates*](https://eprint.iacr.org/2026/2677), received 29 October, approved 31 October 2026. Find this note in **Exhibit 3 → Problem 1 or 3 → The precise problem & its stakes**.
+
+### Concrete costs — separate assumptions
 
 The 30 October 2026 revision of Maher Mamah’s preprint (ePrint 2026/1821) revises concrete cost estimates for the newer isogeny-path algorithm. In the practical memory ranges studied, its expected advantage is concentrated at NIST Level I; substantial parallelization can change that comparison. These are heuristic estimates conditional on memory and parallelization assumptions, not demonstrated production SQIsign key recovery. The small graph experiments here do not measure those attack costs.
 
