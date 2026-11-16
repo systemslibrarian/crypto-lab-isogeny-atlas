@@ -130,11 +130,14 @@ such on the page.
 
 ## Real-World Usage
 
-- **SQIsign** (NIST post-quantum signature on-ramp) — secret keys are
-  endomorphism rings; Problems 1–4 inform its mathematical assumptions, not
-  an assurance of implementation security.
+- **SQIsign** (NIST post-quantum signature on-ramp; [advanced to round 3](https://csrc.nist.gov/News/2026/nist-advances-9-candidates-to-the-3rd-round-of-pqc)
+  on 14 May 2026, the only isogeny-based candidate — rationale in NIST IR 8610) —
+  secret keys are endomorphism rings; Problems 1–4 inform its mathematical
+  assumptions, not an assurance of implementation security.
 - **CSIDH and group-action protocols** — Problem 6, on the spine.
 - **CGL-style expander hashes and VDF proposals** — Problems 5 and 7.
+
+**Standards reviewed 15 November 2026:** SQIsign's round status is from NIST IR 8610 (May 2026), which closed round 2 on 14 May 2026 and selected nine third-round candidates, SQIsign the only isogeny-based one. This atlas computes a graph over GF(431²) and does not implement SQIsign, so it reproduces none of the round-3 specification's parameters or timings.
 
 ## How to Run Locally
 
